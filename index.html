@@ -6212,11 +6212,25 @@ const Registry={
     try{
       if(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) return;   // never in the store apps
       if(!this.cfg().signupUrl) return;
-      this.ok=true; document.body.setAttribute('data-reg','1');
+      this.ok=true; document.body.setAttribute('data-reg','1'); this.honestCopy();
       try{ Auth.render(); Auth.showLanding(Auth.tab||'in'); }catch(e){}
       try{ if(Settings.isOpen()) Settings.paint(); }catch(e){}
       if(Auth.cur) this.touch();
     }catch(e){ this.ok=false; }
+  },
+  honestCopy(){
+    /* web test version only: the "nothing leaves this device" lines are no longer true, so say what is shared */
+    const T={
+      en:{authNote:'Test version. Your password and progress stay on this device.',
+          lpPv1D:'Your password, progress and settings stay on this device. In this test version a new sign-up shares a username and age group with the tester.',
+          parentNote:'Progress and settings live on this device. In this test version only the username, age group and optional email are shared with the person running the test.',
+          privP:'Your password, Calmi’s name, progress and recordings stay on this device. In this test version, signing up shares your username and age group (and an email if you add one) with the person running the test. There is no tracking and no advertising.'},
+      he:{authNote:'גרסת בדיקה. הסיסמה וההתקדמות נשארות במכשיר הזה.',
+          lpPv1D:'הסיסמה, ההתקדמות וההגדרות נשארות במכשיר הזה. בגרסת הבדיקה הרשמה חדשה משתפת שם משתמש וקבוצת גיל עם מי שמנהל את הבדיקה.',
+          parentNote:'ההתקדמות וההגדרות נמצאות במכשיר הזה. בגרסת הבדיקה רק שם המשתמש, קבוצת הגיל ואימייל (אם הוזן) משותפים עם מי שמנהל את הבדיקה.',
+          privP:'הסיסמה, השם של קלמי, ההתקדמות וההקלטות נשארים במכשיר הזה. בגרסת הבדיקה הרשמה משתפת את שם המשתמש וקבוצת הגיל (ואימייל, אם הוספתם) עם מי שמנהל את הבדיקה. אין מעקב ואין פרסומות.'}
+    };
+    Object.keys(T).forEach(function(l){ Object.keys(T[l]).forEach(function(k){ STR[l][k]=T[l][k]; }); });
   },
   async post(event,a,extra){
     const ctl=new AbortController(), to=setTimeout(function(){ ctl.abort(); },12000);
