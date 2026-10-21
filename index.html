@@ -1653,6 +1653,10 @@ body[data-known] [data-nav="intake-1"]{display:none!important}
           <button type="button" data-action="better" class="btn btn-primary"><span data-i18n="yesBetter"></span></button>
           <button type="button" data-action="notyet" class="btn btn-ghost"><span data-i18n="notYet"></span></button>
         </div>
+        <div id="checkin-rest" class="is-gone mx-auto flex max-w-sm flex-col gap-3">
+          <p id="checkin-rest-p" class="text-sm font-light leading-relaxed text-[#17171A]/70"></p>
+          <button type="button" data-action="rest" class="btn btn-ghost"><span id="checkin-rest-b"></span></button>
+        </div>
       </div>
     </section>
 
@@ -1781,8 +1785,8 @@ const ICON = {
   tactile:'<svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 11V5.6a1.5 1.5 0 0 1 3 0V11"/><path d="M11.5 10.4V4.4a1.5 1.5 0 0 1 3 0V11"/><path d="M14.5 10.8V6.4a1.5 1.5 0 0 1 3 0v7.2c0 4-2.6 6.9-6.3 6.9-2.4 0-4-1.1-5.2-3.2L4 13.4a1.5 1.5 0 0 1 2.5-1.6L8.5 14"/></svg>',
   soundOn:'<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.2L12 18.6V5.4L7.2 9.5H4Z"/><path d="M15.6 9.2a4 4 0 0 1 0 5.6"/></svg>',
   soundOff:'<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.2L12 18.6V5.4L7.2 9.5H4Z"/><path d="m16 10 4 4M20 10l-4 4"/></svg>',
-  voice:'<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg>',
-  voiceOff:'<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/><path d="m4 4 16 16"/></svg>'
+  voice:'<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h13a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H10l-4.5 3.5V16H4a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2z"/><path d="M7 9.5h7M7 12.5h4.5"/></svg>',
+  voiceOff:'<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h13a2 2 0 0 1 2 2v6.5a2 2 0 0 1-2 2H10l-4.5 3.5V16H4a2 2 0 0 1-2-2V7.5a2 2 0 0 1 2-2z"/><path d="M7 9.5h7M7 12.5h4.5"/><path d="m3 3 18 18"/></svg>'
 };
 
 const STR = {
@@ -4739,6 +4743,12 @@ function speakSample(){ playSample(); }
 
 function renderCheckin(){
   const c=state.age==='child';
+  const rest=document.getElementById('checkin-rest');
+  if(rest){
+    const show=state.qi>=2, R=STR[state.lang];
+    rest.classList.toggle('is-gone',!show);
+    if(show){ document.getElementById('checkin-rest-p').textContent=c?R.restNoteChild:R.restNote; document.getElementById('checkin-rest-b').textContent=R.restBtn; }
+  }
   el.ciTitle.textContent=fill(c?t().checkinTitleChild:t().checkinTitle,{name:firstName()});
   el.ciSub.textContent=t().checkinSub;
   if(c){ el.ciBuddy.classList.remove('hidden'); el.ciBuddy.innerHTML='<div class="flex justify-center">'+calmiSVG('happy',104)+'</div>'; }
@@ -5013,6 +5023,7 @@ document.addEventListener('click',function(e){
     return;
   }
   if(a==='notyet'){ logPending(false); runNext(); return; }
+  if(a==='rest'){ logPending(false); restart(); return; }
   if(a==='wins'){ renderWins(); setStep(0); showScreen('screen-wins'); return; }
   if(a==='wins-back'){ showScreen('screen-complete'); return; }
   if(a==='close-parent'){
@@ -5268,6 +5279,16 @@ const Rename = {
     try{ if(Chat.started) Chat.say(fill(tr().renameSaved,{n:calmiName()}),['feel','talk','joke','riddle','ground','calm']); }catch(e){}
   }
 };
+
+/* ---- v36 · wording ---- */
+Object.assign(STR.en,{
+  restNote:'It is okay if nothing helps right now. You can stop here, take a break, or reach out to someone you trust.',
+  restNoteChild:'It is okay if it is still hard. Let\u2019s take a break, and tell a grown-up you trust how you feel.',
+  restBtn:'Stop for now', calmiAsk2:'Hi {name}! I am here with you.'});
+Object.assign(STR.he,{
+  restNote:'זה בסדר אם שום דבר לא עוזר כרגע. אפשר לעצור כאן, לקחת הפסקה, או לפנות למישהו שסומכים עליו.',
+  restNoteChild:'זה בסדר אם עדיין קשה. בואו ניקח הפסקה, ונספר למבוגר שסומכים עליו איך מרגישים.',
+  restBtn:'עוצרים לעכשיו', calmiAsk2:'היי {name}! אני כאן איתכם.'});
 
 /* ---- v35 · name and child/adult are asked once, at sign-up ---- */
 Object.assign(STR.en,{authName:'What should we call you?', authAgeQ:'Who is this account for?',
