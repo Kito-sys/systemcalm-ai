@@ -1251,6 +1251,7 @@ body[data-mode="child"] .fb-pill{min-height:3.4rem;font-size:1rem}
       <p class="st-hint" id="st-priv-p"></p>
       <a id="st-priv-a" class="lp-link is-gone" target="_blank" rel="noopener"></a>
       <a id="st-fb-a" class="lp-link is-gone"></a>
+      <a id="st-wa-a" class="lp-link is-gone" target="_blank" rel="noopener noreferrer"></a>
       <button type="button" id="st-survey" class="lp-link is-gone" data-fb="open-settings"></button>
       <div id="st-fb-slot" class="is-gone"></div>
     </section>
@@ -1511,6 +1512,7 @@ body[data-mode="child"] .fb-pill{min-height:3.4rem;font-size:1rem}
         </section>
         <p class="lp-disc" data-i18n="lpDisc"></p>
         <a id="lp-fb" class="lp-link is-gone"></a>
+        <a id="lp-wa" class="lp-link is-gone" target="_blank" rel="noopener noreferrer"></a>
       </div>
     </section>
 
@@ -1701,6 +1703,7 @@ body[data-mode="child"] .fb-pill{min-height:3.4rem;font-size:1rem}
         <div id="complete-buddy" class="hidden"></div>
         <div id="win-strip" class="is-gone"></div>
         <div id="fb-slot" class="is-gone mx-auto w-full max-w-sm"></div>
+        <a id="fb-wa" class="lp-link is-gone" target="_blank" rel="noopener noreferrer"></a>
         <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <button type="button" data-action="again" class="btn btn-primary w-full sm:w-auto"><span data-i18n="againBtn"></span></button>
           <button type="button" data-action="wins" class="btn btn-ghost w-full sm:w-auto"><span data-i18n="winsBtn"></span></button>
@@ -6410,6 +6413,7 @@ Object.assign(STR.en,{
   fbQ3:'Anything confusing, missing, or that you liked? (optional)', fbHint:'Please do not write names or private details.',
   fbSend:'Send', fbSkip:'Not now', fbThanks:'Thank you. This really helps.', fbFail:'Could not send right now. Your answers are still here, try again in a moment.',
   fbOpen:'Take the 1-minute survey', fbPriv:'An optional survey sends your answers anonymously, without your username.',
+  waBtn:'Join the testers’ WhatsApp group', waLp:'Adults: join the testers’ WhatsApp group',
   fbKT:'Did you like it?', fbKSub:'Tell us, it only takes one tap.', fbK3:'Loved it', fbK2:'It was OK', fbK1:'Not really'
 });
 Object.assign(STR.he,{
@@ -6419,6 +6423,7 @@ Object.assign(STR.he,{
   fbQ3:'משהו מבלבל, חסר, או שאהבתם? (לא חובה)', fbHint:'בבקשה בלי שמות ופרטים אישיים.',
   fbSend:'שליחה', fbSkip:'לא עכשיו', fbThanks:'תודה. זה עוזר מאוד.', fbFail:'לא הצלחנו לשלוח כרגע. התשובות שלכם עדיין כאן, אפשר לנסות שוב עוד רגע.',
   fbOpen:'למילוי סקר של דקה', fbPriv:'סקר לא חובה שולח את התשובות באופן אנונימי, בלי שם המשתמש שלכם.',
+  waBtn:'הצטרפות לקבוצת הבודקים בוואטסאפ', waLp:'מבוגרים: הצטרפות לקבוצת הבודקים בוואטסאפ',
   fbKT:'אהבת?', fbKSub:'ספרו לנו, זה לוקח רק לחיצה אחת.', fbK3:'אהבתי מאוד', fbK2:'היה בסדר', fbK1:'לא ממש'
 });
 const Feedback={
@@ -6432,10 +6437,19 @@ const Feedback={
     const n=this.better();
     if(!((f.asks===0&&n>=1)||(f.asks===1&&n>=4))) { this.hide(); return; }
     f.asks++; Auth.save();
-    this.mount(document.getElementById('fb-slot'));
+    this.mount(document.getElementById('fb-slot')); this.paintWa();
   },
-  hide(){ const s=document.getElementById('fb-slot'); if(s){ s.classList.add('is-gone'); s.innerHTML=''; } },
+  hide(){ const s=document.getElementById('fb-slot'); if(s){ s.classList.add('is-gone'); s.innerHTML=''; } this.paintWa(); },
   kid(){ return state.age==='child'; },
+  waUrl(){ return (Registry.cfg().whatsappUrl)||'https://chat.whatsapp.com/Fzl5jaKUaopGU4OrpHweum?mode=gi_t'; },
+  /* the group link is for adults only, web test version only; on the completion screen it waits until the survey card is out of the way */
+  paintWa(){
+    const L=STR[state.lang], on=this.okHere()&&!this.kid();
+    const set=function(id,txt,show){ const a=document.getElementById(id); if(!a) return; a.textContent=txt; if(show){ a.href=Feedback.waUrl(); a.classList.remove('is-gone'); } else { a.removeAttribute('href'); a.classList.add('is-gone'); } };
+    const slot=document.getElementById('fb-slot'), cardUp=!!(slot && !slot.classList.contains('is-gone') && slot.innerHTML);
+    set('fb-wa',L.waBtn,on&&!cardUp);
+    set('st-wa-a',L.waBtn,on);
+  },
   mount(slot){
     if(!slot) return; this.slot=slot; this.ans={}; this.sending=false; this.render(); slot.classList.remove('is-gone');
   },
@@ -6481,9 +6495,9 @@ const Feedback={
   thanks(){
     const slot=this.slot; if(!slot) return;
     slot.innerHTML='<div class="fb-card" role="status"><h3>'+STR[state.lang].fbThanks+'</h3></div>';
-    const s=slot; window.setTimeout(function(){ if(s.id==='fb-slot'){ s.classList.add('is-gone'); s.innerHTML=''; } },4200);
+    this.paintWa(); const s=slot; window.setTimeout(function(){ if(s.id==='fb-slot'){ s.classList.add('is-gone'); s.innerHTML=''; } Feedback.paintWa(); },4200);
   },
-  skip(){ if(this.slot){ this.slot.classList.add('is-gone'); this.slot.innerHTML=''; } },
+  skip(){ if(this.slot){ this.slot.classList.add('is-gone'); this.slot.innerHTML=''; } this.paintWa(); },
   openFromSettings(){
     const slot=document.getElementById('st-fb-slot'); if(!slot||!this.okHere()) return;
     const f=this.fb(); if(f&&f.done){ this.slot=slot; this.thanks(); slot.classList.remove('is-gone'); return; }
@@ -6495,8 +6509,15 @@ const Feedback={
   Settings.paint=function(){ sp.call(this); try{
     const L=STR[state.lang], b=document.getElementById('st-survey'), ok=Feedback.okHere();
     if(b){ b.textContent=L.fbOpen; b.classList.toggle('is-gone',!ok); }
+    Feedback.paintWa();
     if(!ok){ const s=document.getElementById('st-fb-slot'); if(s){ s.classList.add('is-gone'); s.innerHTML=''; } }
     if(Registry.ok){ const p=document.getElementById('st-priv-p'); if(p && p.textContent.indexOf(L.fbPriv)<0) p.textContent+=' '+L.fbPriv; }
+  }catch(e){} };
+  const ar=Auth.render;
+  Auth.render=function(){ ar.call(this); try{
+    const a=document.getElementById('lp-wa'), L=STR[state.lang];
+    if(a){ a.textContent=L.waLp; if(Registry.ok){ a.href=Feedback.waUrl(); a.classList.remove('is-gone'); } else a.classList.add('is-gone'); }
+    Feedback.paintWa();
   }catch(e){} };
   document.addEventListener('click',function(e){
     const b=e.target && e.target.closest && e.target.closest('[data-fb]'); if(!b) return;
