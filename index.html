@@ -1206,6 +1206,19 @@ html[data-theme] .lp-link,html[data-theme] #auth-forgot{padding:.7rem .2rem;min-
 html[data-theme] .pw button{width:2.75rem;height:2.75rem}
 html[data-theme] #voice-test,html[data-theme] #voice-try{min-height:2.75rem}
 html[data-theme] .chk{min-height:2.75rem}
+html[data-theme] .fb-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-opt);padding:1.1rem 1.15rem;text-align:start;box-shadow:var(--shadow-sm)}
+html[data-theme] .fb-card h3{font-size:1rem;font-weight:600;color:var(--ink)}
+html[data-theme] .fb-card p,html[data-theme] .fb-card label{font-size:.8rem;font-weight:300;color:var(--ink);opacity:.75;line-height:1.5}
+.fb-q{margin-top:.9rem}
+.fb-q>b{display:block;font-size:.85rem;font-weight:500;margin-bottom:.45rem}
+.fb-row{display:flex;gap:.45rem;flex-wrap:wrap}
+.fb-pill{flex:1 1 0;min-width:2.75rem;min-height:2.75rem;border:1px solid var(--line-hi,#ccc);border-radius:.8rem;background:transparent;color:inherit;font:inherit;font-size:.85rem;cursor:pointer;padding:.45rem .6rem}
+.fb-pill[aria-pressed="true"]{background:#17171A;color:#F6F4F1;border-color:#17171A}
+.fb-ends{display:flex;justify-content:space-between;font-size:.7rem;opacity:.6;margin-top:.3rem}
+.fb-card textarea{width:100%;min-height:4.5rem;resize:vertical;border:1px solid var(--line-hi,#ccc);border-radius:.8rem;background:transparent;color:inherit;font:inherit;font-size:.9rem;padding:.6rem .7rem}
+.fb-actions{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap}
+.fb-actions .btn{flex:1 1 8rem}
+body[data-mode="child"] .fb-pill{min-height:3.4rem;font-size:1rem}
 </style>
 </head>
 
@@ -1238,6 +1251,8 @@ html[data-theme] .chk{min-height:2.75rem}
       <p class="st-hint" id="st-priv-p"></p>
       <a id="st-priv-a" class="lp-link is-gone" target="_blank" rel="noopener"></a>
       <a id="st-fb-a" class="lp-link is-gone"></a>
+      <button type="button" id="st-survey" class="lp-link is-gone" data-fb="open-settings"></button>
+      <div id="st-fb-slot" class="is-gone"></div>
     </section>
 
     <section class="st-sec st-danger">
@@ -1685,6 +1700,7 @@ html[data-theme] .chk{min-height:2.75rem}
         </div>
         <div id="complete-buddy" class="hidden"></div>
         <div id="win-strip" class="is-gone"></div>
+        <div id="fb-slot" class="is-gone mx-auto w-full max-w-sm"></div>
         <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <button type="button" data-action="again" class="btn btn-primary w-full sm:w-auto"><span data-i18n="againBtn"></span></button>
           <button type="button" data-action="wins" class="btn btn-ghost w-full sm:w-auto"><span data-i18n="winsBtn"></span></button>
@@ -5031,6 +5047,7 @@ document.addEventListener('click',function(e){
   if(a==='better'){
     const fresh=logPending(true);
     renderComplete(); showScreen('screen-complete'); renderWinStrip(fresh); try{ Native.success(); }catch(e){}
+    try{ Feedback.maybe(); }catch(e){}
     return;
   }
   if(a==='notyet'){ logPending(false); runNext(); return; }
@@ -6385,6 +6402,118 @@ const Registry={
 })();
 try{ Registry.init(); }catch(e){}
 
+/* ---- v38 · optional, anonymous satisfaction survey (web test version only) ---- */
+Object.assign(STR.en,{
+  fbT:'One minute for the testers?', fbSub:'Optional and anonymous. Nothing that identifies you is sent. It helps improve this before it reaches more people.',
+  fbQ1:'How helpful was this for you, overall?', fbLo:'Not helpful', fbHi:'Very helpful',
+  fbQ2:'Would you suggest it to someone who gets overwhelmed?', fbYes:'Yes', fbMaybe:'Maybe', fbNo:'No',
+  fbQ3:'Anything confusing, missing, or that you liked? (optional)', fbHint:'Please do not write names or private details.',
+  fbSend:'Send', fbSkip:'Not now', fbThanks:'Thank you. This really helps.', fbFail:'Could not send right now. Your answers are still here, try again in a moment.',
+  fbOpen:'Take the 1-minute survey', fbPriv:'An optional survey sends your answers anonymously, without your username.',
+  fbKT:'Did you like it?', fbKSub:'Tell us, it only takes one tap.', fbK3:'Loved it', fbK2:'It was OK', fbK1:'Not really'
+});
+Object.assign(STR.he,{
+  fbT:'דקה בשביל הבודקים?', fbSub:'לא חובה ואנונימי. לא נשלח שום דבר שמזהה אתכם. זה עוזר לשפר את האפליקציה לפני שהיא מגיעה ליותר אנשים.',
+  fbQ1:'עד כמה זה עזר לכם, בסך הכול?', fbLo:'לא עזר', fbHi:'עזר מאוד',
+  fbQ2:'האם הייתם ממליצים על זה למישהו שנוטה להתמלא יתר על המידה?', fbYes:'כן', fbMaybe:'אולי', fbNo:'לא',
+  fbQ3:'משהו מבלבל, חסר, או שאהבתם? (לא חובה)', fbHint:'בבקשה בלי שמות ופרטים אישיים.',
+  fbSend:'שליחה', fbSkip:'לא עכשיו', fbThanks:'תודה. זה עוזר מאוד.', fbFail:'לא הצלחנו לשלוח כרגע. התשובות שלכם עדיין כאן, אפשר לנסות שוב עוד רגע.',
+  fbOpen:'למילוי סקר של דקה', fbPriv:'סקר לא חובה שולח את התשובות באופן אנונימי, בלי שם המשתמש שלכם.',
+  fbKT:'אהבת?', fbKSub:'ספרו לנו, זה לוקח רק לחיצה אחת.', fbK3:'אהבתי מאוד', fbK2:'היה בסדר', fbK1:'לא ממש'
+});
+const Feedback={
+  ans:{}, slot:null, sending:false,
+  fb(){ const a=Auth.cur; if(!a) return null; if(!a.fb) a.fb={asks:0,done:false}; return a.fb; },
+  okHere(){ return !!(Registry.ok && Auth.cur); },
+  better(){ try{ return Store.profile().sessions.filter(function(x){return x.better;}).length; }catch(e){ return 0; } },
+  /* shown after a session the person said helped, at most twice, never again once answered */
+  maybe(){
+    const f=this.fb(); if(!this.okHere()||!f||f.done||f.asks>=2) { this.hide(); return; }
+    const n=this.better();
+    if(!((f.asks===0&&n>=1)||(f.asks===1&&n>=4))) { this.hide(); return; }
+    f.asks++; Auth.save();
+    this.mount(document.getElementById('fb-slot'));
+  },
+  hide(){ const s=document.getElementById('fb-slot'); if(s){ s.classList.add('is-gone'); s.innerHTML=''; } },
+  kid(){ return state.age==='child'; },
+  mount(slot){
+    if(!slot) return; this.slot=slot; this.ans={}; this.sending=false; this.render(); slot.classList.remove('is-gone');
+  },
+  render(err){
+    const L=STR[state.lang], slot=this.slot; if(!slot) return;
+    const A=this.ans, pill=function(k,v,t){ return '<button type="button" class="fb-pill" data-fb="'+k+'" data-v="'+v+'" aria-pressed="'+(A[k]===String(v)?'true':'false')+'">'+t+'</button>'; };
+    let h;
+    if(this.kid()){
+      h='<div class="fb-card"><h3>'+L.fbKT+'</h3><p>'+L.fbKSub+'</p><div class="fb-q"><div class="fb-row">'+
+        pill('kid',3,L.fbK3)+pill('kid',2,L.fbK2)+pill('kid',1,L.fbK1)+'</div></div>'+
+        '<div class="fb-actions"><button type="button" class="btn btn-ghost" data-fb="skip">'+L.fbSkip+'</button></div></div>';
+    } else {
+      h='<div class="fb-card"><h3>'+L.fbT+'</h3><p>'+L.fbSub+'</p>'+
+        '<div class="fb-q"><b>'+L.fbQ1+'</b><div class="fb-row">'+[1,2,3,4,5].map(function(i){ return pill('r',i,i); }).join('')+'</div>'+
+        '<div class="fb-ends"><span>'+L.fbLo+'</span><span>'+L.fbHi+'</span></div></div>';
+      if(A.r){
+        h+='<div class="fb-q"><b>'+L.fbQ2+'</b><div class="fb-row">'+pill('rec','yes',L.fbYes)+pill('rec','maybe',L.fbMaybe)+pill('rec','no',L.fbNo)+'</div></div>'+
+           '<div class="fb-q"><label for="fb-text"><b>'+L.fbQ3+'</b></label><textarea id="fb-text" maxlength="400" rows="3"></textarea><p>'+L.fbHint+'</p></div>';
+      }
+      h+=(err?'<p role="alert" style="margin-top:.7rem;opacity:1">'+L.fbFail+'</p>':'')+'<div class="fb-actions">'+
+        (A.r?'<button type="button" class="btn btn-primary" data-fb="send"'+(this.sending?' disabled':'')+'>'+L.fbSend+'</button>':'')+
+        '<button type="button" class="btn btn-ghost" data-fb="skip">'+L.fbSkip+'</button></div></div>';
+    }
+    const keep=(document.getElementById('fb-text')||{}).value;
+    slot.innerHTML=h;
+    if(keep){ const t=document.getElementById('fb-text'); if(t) t.value=keep; }
+  },
+  async send(){
+    if(this.sending) return; this.sending=true;
+    const A=this.ans, tx=document.getElementById('fb-text'), cfg=Registry.cfg();
+    const body={_subject:'SystemCalm survey: '+(A.kid?('kid '+A.kid+'/3'):(A.r+'/5')), _template:'table', _captcha:'false', _honey:'',
+      event:'survey', who:'anonymous', rating:A.kid?('kid '+A.kid+' of 3'):(A.r+' of 5'), recommend:A.rec||'', comment:tx?String(tx.value||'').trim().slice(0,400):'',
+      age:state.age||'', lang:state.lang||'', better_sessions:this.better(), when:new Date().toISOString()};
+    const ctl=new AbortController(), to=setTimeout(function(){ ctl.abort(); },12000);
+    try{
+      const r=await fetch(String(cfg.signupUrl),{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok) throw new Error('http '+r.status);
+      const f=this.fb(); if(f){ f.done=true; Auth.save(); }
+      this.thanks();
+    }catch(e){ this.sending=false; this.render(true); }
+    finally{ clearTimeout(to); }
+  },
+  thanks(){
+    const slot=this.slot; if(!slot) return;
+    slot.innerHTML='<div class="fb-card" role="status"><h3>'+STR[state.lang].fbThanks+'</h3></div>';
+    const s=slot; window.setTimeout(function(){ if(s.id==='fb-slot'){ s.classList.add('is-gone'); s.innerHTML=''; } },4200);
+  },
+  skip(){ if(this.slot){ this.slot.classList.add('is-gone'); this.slot.innerHTML=''; } },
+  openFromSettings(){
+    const slot=document.getElementById('st-fb-slot'); if(!slot||!this.okHere()) return;
+    const f=this.fb(); if(f&&f.done){ this.slot=slot; this.thanks(); slot.classList.remove('is-gone'); return; }
+    this.mount(slot);
+  }
+};
+(function(){
+  const sp=Settings.paint;
+  Settings.paint=function(){ sp.call(this); try{
+    const L=STR[state.lang], b=document.getElementById('st-survey'), ok=Feedback.okHere();
+    if(b){ b.textContent=L.fbOpen; b.classList.toggle('is-gone',!ok); }
+    if(!ok){ const s=document.getElementById('st-fb-slot'); if(s){ s.classList.add('is-gone'); s.innerHTML=''; } }
+    if(Registry.ok){ const p=document.getElementById('st-priv-p'); if(p && p.textContent.indexOf(L.fbPriv)<0) p.textContent+=' '+L.fbPriv; }
+  }catch(e){} };
+  document.addEventListener('click',function(e){
+    const b=e.target && e.target.closest && e.target.closest('[data-fb]'); if(!b) return;
+    e.preventDefault(); e.stopPropagation();
+    const k=b.dataset.fb;
+    if(k==='open-settings'){ Feedback.openFromSettings(); return; }
+    if(k==='skip'){ Feedback.skip(); return; }
+    if(k==='send'){ Feedback.send(); return; }
+    if(k==='kid'){ Feedback.ans.kid=b.dataset.v; Feedback.send(); return; }
+    Feedback.ans[k]=b.dataset.v; Feedback.render();
+    if(k==='r'){ try{ const t=document.getElementById('fb-text'); if(t) t.scrollIntoView({behavior:'smooth',block:'center'}); }catch(x){} }
+  },true);
+  const ap=applyLang;
+})();
+try{ if(window.__dbg) window.__dbg.Feedback=Feedback; }catch(e){}
+
+
 /* ==================================================================
    13 · INIT
 ================================================================== */
@@ -6396,7 +6525,7 @@ try{ runHero(); syncFilm(); }catch(e){}
 
 /* Test hook. Exposed only when the URL explicitly asks for it, so the app's
    internals stay private in normal use but a regression run can inspect them. */
-try{ if(/[?&]dbg(\b|=)/.test(location.search)) window.__dbg={restart:restart,Voice:Voice,Session:Session,state:state,STR:STR,ADU:ADU,KID:KID,TECHNIQUES:TECHNIQUES,RecVoice:RecVoice,Studio:Studio,recText:recText,REC_KEYS:REC_KEYS,VOICED:VOICED,VOICED_SET:VOICED_SET,Voiced:Voiced,adultLine:adultLine,ENCOURAGE:ENCOURAGE,Auth:Auth,Registry:Registry,Settings:Settings,Chat:Chat,Rename:Rename,CHAT:CHAT,sha256hex:sha256hex,voiceChoice:voiceChoice}; }catch(e){}
+try{ if(/[?&]dbg(\b|=)/.test(location.search)) window.__dbg={restart:restart,Voice:Voice,Session:Session,state:state,STR:STR,ADU:ADU,KID:KID,TECHNIQUES:TECHNIQUES,RecVoice:RecVoice,Studio:Studio,recText:recText,REC_KEYS:REC_KEYS,VOICED:VOICED,VOICED_SET:VOICED_SET,Voiced:Voiced,adultLine:adultLine,ENCOURAGE:ENCOURAGE,Auth:Auth,Registry:Registry,Feedback:Feedback,Settings:Settings,Chat:Chat,Rename:Rename,CHAT:CHAT,sha256hex:sha256hex,voiceChoice:voiceChoice}; }catch(e){}
 })();
 </script>
 </body>
