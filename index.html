@@ -1198,6 +1198,14 @@ html[data-theme] .auth-age button b{font-size:.95rem;font-weight:700}
 html[data-theme] .auth-age button small{font-size:.76rem;line-height:1.3;color:var(--ink-3)}
 html[data-theme] .auth-age button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);outline:2px solid var(--ring);outline-offset:0}
 body[data-known] [data-nav="intake-1"]{display:none!important}
+
+html[data-theme] .lang-btn{position:relative}
+html[data-theme] .lang-btn::after{content:"";position:absolute;inset:-9px -5px}
+html[data-theme] button[data-nav]{min-height:2.75rem;padding:.7rem 1.1rem}
+html[data-theme] .lp-link,html[data-theme] #auth-forgot{padding:.7rem .2rem;min-height:2.75rem}
+html[data-theme] .pw button{width:2.75rem;height:2.75rem}
+html[data-theme] #voice-test,html[data-theme] #voice-try{min-height:2.75rem}
+html[data-theme] .chk{min-height:2.75rem}
 </style>
 </head>
 
@@ -1229,6 +1237,7 @@ body[data-known] [data-nav="intake-1"]{display:none!important}
       <h4 id="st-priv-h"></h4>
       <p class="st-hint" id="st-priv-p"></p>
       <a id="st-priv-a" class="lp-link is-gone" target="_blank" rel="noopener"></a>
+      <a id="st-fb-a" class="lp-link is-gone"></a>
     </section>
 
     <section class="st-sec st-danger">
@@ -1486,6 +1495,7 @@ body[data-known] [data-nav="intake-1"]{display:none!important}
           <button type="button" class="btn btn-primary lp-big" id="lp-start2"><span data-i18n="lpCtaStart"></span><svg class="dir-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         </section>
         <p class="lp-disc" data-i18n="lpDisc"></p>
+        <a id="lp-fb" class="lp-link is-gone"></a>
       </div>
     </section>
 
@@ -3067,10 +3077,10 @@ const TECHNIQUES = [
 
 /* ---------- VISUAL delivery: silent, no touch demanded ---------- */
 {
-  id:'sigh', channel:'visual', ages:['adult','child'], render:'orb', ev:'strong',
+  id:'sigh', channel:'visual', ages:['adult','child'], render:'orb', ev:'moderate',
   name:{en:'Cyclic sighing',he:'אנחה מחזורית'},
   method:{en:'Physiological sigh · Balban et al., Cell Reports Medicine 2023',he:'אנחה פיזיולוגית · Balban ואחרים, Cell Reports Medicine 2023'},
-  note:{en:'In a randomised trial this beat box breathing and mindfulness on daily mood. The double inhale reinflates collapsed air sacs; the long exhale is what calms.',he:'במחקר אקראי מבוקר זה עלה על נשימת קופסה ועל מיינדפולנס בשיפור מצב הרוח. השאיפה הכפולה פותחת נאדיות שקרסו, והנשיפה הארוכה היא זו שמרגיעה.'},
+  note:{en:'In a four-week randomised trial (108 people), five minutes a day of cyclic sighing lifted mood more than mindfulness meditation. It was not directly compared with box breathing. The usual explanation: the double inhale reopens collapsed air sacs, and the long exhale is what calms.',he:'בניסוי אקראי של ארבעה שבועות (108 משתתפים), חמש דקות ביום של אנחה מחזורית שיפרו את מצב הרוח יותר ממדיטציית מיינדפולנס. היא לא הושוותה ישירות לנשימת קופסה. ההסבר המקובל: השאיפה הכפולה פותחת נאדיות שקרסו, והנשיפה הארוכה היא זו שמרגיעה.'},
   build(age){ const c=age==='child';
     return [P('ready',5,{say:1})].concat(rep(RC(c?6:8),()=>[
       P('in',c?1.5:2), P('sip',1), P('out',c?4.5:6)
@@ -3078,7 +3088,7 @@ const TECHNIQUES = [
   }
 },
 {
-  id:'resonance', channel:'visual', ages:['adult','child'], render:'orb', ev:'strong',
+  id:'resonance', channel:'visual', ages:['adult','child'], render:'orb', ev:'moderate',
   name:{en:'Coherence breathing',he:'נשימת קוהרנטיות'},
   method:{en:'Resonance frequency breathing · ~6 breaths/min (0.1 Hz)',he:'נשימה בתדר תהודה · כ-6 נשימות בדקה (0.1 הרץ)'},
   note:{en:'Six breaths a minute lines your breathing up with the baroreflex, which is where heart-rate variability peaks. Children resonate faster, so the pace here is quicker for them.',he:'שש נשימות בדקה מסנכרנות את הנשימה עם הברורפלקס — הנקודה שבה שונות קצב הלב מגיעה לשיא. אצל ילדים תדר התהודה מהיר יותר, ולכן הקצב כאן מהיר יותר עבורם.'},
@@ -3114,7 +3124,7 @@ const TECHNIQUES = [
   }
 },
 {
-  id:'ground54321', channel:'visual', ages:['adult','child'], render:'text', ev:'moderate',
+  id:'ground54321', channel:'visual', ages:['adult','child'], render:'text', ev:'weak',
   name:{en:'Grounding inventory',he:'עיגון בחושים'},
   method:{en:'5-4-3-2-1 · the overloaded channel is removed',he:'5-4-3-2-1 · הערוץ שבהצפה מושמט'},
   note:{en:'The classic senses inventory, with one change: the step for your overloaded channel is dropped. Asking someone to attend to a sense that is already flooding them makes it worse.',he:'מלאי החושים הקלאסי, עם שינוי אחד: השלב של הערוץ שבהצפה מושמט. לבקש ממישהו להתמקד בחוש שכבר מציף אותו רק מחמיר את המצב.'},
@@ -3138,7 +3148,7 @@ const TECHNIQUES = [
 
 /* ---------- AUDITORY delivery: the sound does the pacing ---------- */
 {
-  id:'ocean', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'strong', audio:'swell',
+  id:'ocean', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'moderate', audio:'swell',
   name:{en:'Ocean-paced breathing',he:'נשימה בקצב הגלים'},
   method:{en:'Extended exhale, paced by a brown-noise swell',he:'נשיפה מוארכת, מוכתבת על ידי גל של רעש חום'},
   note:{en:'The sound swells as you breathe in and recedes as you breathe out, so you can keep your eyes shut and still stay on pace. Nothing to look at, nothing to press.',he:'הצליל מתעצם בשאיפה ונסוג בנשיפה, כך שאפשר להשאיר את העיניים עצומות ועדיין להישאר בקצב. אין על מה להסתכל ואין על מה ללחוץ.'},
@@ -3156,21 +3166,21 @@ const TECHNIQUES = [
   }
 },
 {
-  id:'chimes', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'moderate', audio:'chimes',
+  id:'chimes', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'weak', audio:'chimes',
   name:{en:'Slowing chimes',he:'פעימות שמאטות'},
   method:{en:'Auditory tempo entrainment · 60 → 40 bpm',he:'סחיפת קצב שמיעתית · מ-60 ל-40 פעימות בדקה'},
   note:{en:'A soft chime that starts near a resting pulse and slowly drops below it. You do not have to do anything — just let the tempo pull you down with it.',he:'צליל רך שמתחיל בסביבות הדופק במנוחה ויורד ממנו לאט. לא צריך לעשות כלום — רק לתת לקצב למשוך אותך איתו.'},
   build(age){ return [P('ready',4,{say:1}), P('listen',DU(age==='child'?70:110),{tempo:[60,40]}), P('done',5)]; }
 },
 {
-  id:'bed', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'moderate', audio:'bed',
+  id:'bed', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'weak', audio:'bed',
   name:{en:'No-demand sound bed',he:'שכבת צליל ללא דרישות'},
   method:{en:'Low brown noise + a soft drone · zero instructions',he:'רעש חום נמוך + דרון רך · בלי שום הנחיה'},
   note:{en:'At the peak of an overload, any instruction is extra load. This one asks nothing at all: steady low sound, no counting, no pacing, no task.',he:'בשיא ההצפה, כל הנחיה היא עומס נוסף. כאן לא מבקשים כלום: צליל נמוך ויציב, בלי ספירה, בלי קצב ובלי משימה.'},
   build(age){ return [P('ready',4,{say:1}), P('free',DU(age==='child'?90:150)), P('done',5)]; }
 },
 {
-  id:'bodyscan', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'strong', audio:'bed', needsVoice:true,
+  id:'bodyscan', channel:'auditory', ages:['adult','child'], render:'quiet', ev:'moderate', audio:'bed', needsVoice:true,
   name:{en:'Spoken release',he:'שחרור מודרך בקול'},
   method:{en:'Four-group progressive relaxation, spoken',he:'הרפיה הדרגתית בארבע קבוצות שרירים, בהנחיה קולית'},
   note:{en:'Progressive muscle relaxation is one of the best-evidenced techniques here — decades of trials. This is the short four-group version, read aloud so your eyes can stay closed.',he:'הרפיית שרירים הדרגתית היא אחת השיטות המבוססות ביותר כאן — עשרות שנים של מחקרים. זו הגרסה המקוצרת בארבע קבוצות, שמוקראת בקול כדי שהעיניים יוכלו להישאר עצומות.'},
@@ -3217,16 +3227,16 @@ const TECHNIQUES = [
   }
 },
 {
-  id:'pressure', channel:'tactile', ages:['adult','child'], render:'press', ev:'moderate',
+  id:'pressure', channel:'tactile', ages:['adult','child'], render:'press', ev:'weak',
   name:{en:'Deep pressure',he:'לחץ עמוק'},
   method:{en:'Self-applied deep pressure · press / release cycles',he:'לחץ עמוק עצמי · מחזורי לחיצה ושחרור'},
-  note:{en:'Hug yourself and press as the square contracts, release as it opens. Deep pressure calms many people — but for tactile-defensive sensory profiles it can be the opposite, so stop the moment it feels unpleasant.',he:'לחבק את עצמך וללחוץ כשהריבוע מתכווץ, ולשחרר כשהוא נפתח. לחץ עמוק מרגיע אנשים רבים — אבל אצל פרופיל חושי רגיש-למגע זה יכול לפעול הפוך, אז כדאי לעצור ברגע שזה מרגיש לא נעים.'},
+  note:{en:'Hug yourself and press as the square contracts, release as it opens. Deep pressure calms many people — but for tactile-defensive sensory profiles it can be the opposite, so stop the moment it feels unpleasant. The research is mostly on weighted blankets, and it is limited.',he:'לחבק את עצמך וללחוץ כשהריבוע מתכווץ, ולשחרר כשהוא נפתח. לחץ עמוק מרגיע אנשים רבים — אבל אצל פרופיל חושי רגיש-למגע זה יכול לפעול הפוך, אז כדאי לעצור ברגע שזה מרגיש לא נעים. המחקר עוסק בעיקר בשמיכות כבדות, והוא מוגבל.'},
   build(age){ const c=age==='child';
     return [P('ready',5,{say:1})].concat(rep(RC(c?5:6),()=>[P('press',c?4:5),P('soften',c?8:10)])).concat([P('done',4)]);
   }
 },
 {
-  id:'pmr', channel:'tactile', ages:['adult','child'], render:'press', ev:'strong',
+  id:'pmr', channel:'tactile', ages:['adult','child'], render:'press', ev:'moderate',
   name:{en:'Muscle release',he:'שחרור שרירים'},
   method:{en:'Progressive muscle relaxation · 4-group short form',he:'הרפיית שרירים הדרגתית · גרסה מקוצרת בארבע קבוצות'},
   nameChild:{en:'Spaghetti body',he:'גוף ספגטי'},
@@ -3243,7 +3253,7 @@ const TECHNIQUES = [
   }
 },
 {
-  id:'heartbeat', channel:'tactile', ages:['adult','child'], render:'press', ev:'moderate', beat:true,
+  id:'heartbeat', channel:'tactile', ages:['adult','child'], render:'press', ev:'weak', beat:true,
   name:{en:'Slowing pulse',he:'דופק שמאט'},
   method:{en:'Haptic tempo entrainment · 72 → 54 bpm',he:'סחיפת קצב במישוש · מ-72 ל-54 פעימות בדקה'},
   note:{en:'Put a hand on your chest and feel the double-tap slow down. It is a pacing cue, not a reading of your actual heart — but a steady, slowing rhythm to lean on is exactly what a spun-up system is looking for.',he:'להניח יד על החזה ולהרגיש איך הפעימה הכפולה מאטה. זה סימן קצב ולא מדידה של הלב שלך — אבל קצב יציב שהולך ומאט הוא בדיוק מה שמערכת מוצפת מחפשת להישען עליו.'},
@@ -4550,8 +4560,9 @@ function setStep(n){
   el.progress.style.opacity=inFlow?'1':'0';
   el.progress.style.pointerEvents=inFlow?'auto':'none';
   if(!inFlow) return;
-  el.rail.style.width=(n/3*100)+'%';
-  el.stepLabel.textContent=fill(t().step,{n:n});
+  const known=document.body.hasAttribute('data-known'), k=known?Math.max(1,n-1):n, tot=known?2:3;
+  el.rail.style.width=(k/tot*100)+'%';
+  el.stepLabel.textContent=fill(t().step.replace(/3\b/,String(tot)),{n:k});
   el.stepHint.textContent=t()['hint'+n];
 }
 function setChrome(quiet){
@@ -4618,7 +4629,7 @@ function renderInfo(tech){
   el.info.innerHTML='<div class="card space-y-3 p-5 text-start">'+
     voiceModeHTML()+voiceSourceHTML()+voicePickerHTML()+
     '<div><p class="eyebrow text-[#17171A]">'+L.method+'</p><p class="text-sm font-light text-[#17171A]">'+tech.method[lang]+'</p></div>'+
-    '<div><p class="eyebrow text-[#17171A]">'+L.evidence+'</p><p class="text-sm font-light text-[#17171A]">'+L.ev[tech.ev]+'</p></div>'+
+    '<div><p class="eyebrow text-[#17171A]">'+L.evidence+'</p><p class="text-sm font-light text-[#17171A]">'+L.ev[tech.ev]+'</p><p class="mt-1 text-[11px] font-light leading-relaxed text-[#17171A]/60">'+L.evNote+'</p></div>'+
     '<div><p class="eyebrow text-[#17171A]">'+L.caution+'</p><p class="text-sm font-light leading-relaxed text-[#17171A]/60">'+tech.note[lang]+'</p></div>'+
     (tech.headphones?'<p class="text-xs font-light text-[#17171A]">'+L.headphones+'</p>':'')+
     ((tech.channel==='tactile'&&!Haptic.ok)?'<p class="text-xs font-light text-[#17171A]/60">'+L.noVibration+'</p>':'')+
@@ -5290,6 +5301,10 @@ Object.assign(STR.he,{
   restNoteChild:'זה בסדר אם עדיין קשה. בואו ניקח הפסקה, ונספר למבוגר שסומכים עליו איך מרגישים.',
   restBtn:'עוצרים לעכשיו', calmiAsk2:'היי {name}! אני כאן איתכם.'});
 
+/* ---- v37 · honest evidence note, feedback link ---- */
+Object.assign(STR.en,{evNote:'Labels describe general research on stress and anxiety. None of these has been tested in this app, or on sensory overload specifically.', fbLink:'Send feedback'});
+Object.assign(STR.he,{evNote:'התוויות מתארות מחקר כללי על לחץ וחרדה. אף אחת מהטכניקות לא נבדקה באפליקציה הזו, או על הצפה חושית בפרט.', fbLink:'שליחת משוב'});
+
 /* ---- v35 · name and child/adult are asked once, at sign-up ---- */
 Object.assign(STR.en,{authName:'What should we call you?', authAgeQ:'Who is this account for?',
   errName:'Please type the name we should call you.', errAge:'Please choose Child or Adult.'});
@@ -5431,6 +5446,8 @@ const Auth = {
     const sub=document.getElementById('auth-submit'); if(sub) sub.textContent=(this.tab==='up')?L.authSubmitUp:L.authSubmitIn;
     const note=document.getElementById('auth-note');
     if(note) note.textContent=L.authNote+(this.persists?'':' '+L.errNoStore);
+    const lf=document.getElementById('lp-fb'), em=(window.SC_CONFIG&&window.SC_CONFIG.supportEmail)||'';
+    if(lf){ lf.textContent=L.fbLink; if(em){ lf.href='mailto:'+em+'?subject='+encodeURIComponent('SystemCalm feedback'); lf.classList.remove('is-gone'); } else lf.classList.add('is-gone'); }
     const eye=document.getElementById('auth-eye');
     if(eye){ const show=document.getElementById('auth-pass').type==='password'; eye.setAttribute('aria-label',show?L.authShow:L.authHide); }
     const er=document.getElementById('auth-err');
@@ -6170,6 +6187,8 @@ const Settings={
     g('st-priv-h').textContent=L.privH; g('st-priv-p').textContent=L.privP;
     const a=g('st-priv-a'), url=Native.cfg().privacyUrl||'';
     a.textContent=L.privLink; if(url){ a.href=url; a.classList.remove('is-gone'); } else a.classList.add('is-gone');
+    const fb=g('st-fb-a'), em=Native.cfg().supportEmail||'';
+    fb.textContent=L.fbLink; if(em){ fb.href='mailto:'+em+'?subject='+encodeURIComponent('SystemCalm feedback'); fb.classList.remove('is-gone'); } else fb.classList.add('is-gone');
     g('st-del').textContent=L.delBtn; g('st-del-p').textContent=L.delAsk;
     g('st-del-yes').textContent=L.delYes; g('st-del-no').textContent=L.delNo;
     const pf=Native.prefs();
