@@ -1191,6 +1191,13 @@ html[data-theme] .btn.st-del-yes:hover{background:#8A2F21}
 .st-danger #st-del{color:#A33A2A;border-color:rgba(163,58,42,.35)}
 body[data-native] .vs-bk{display:none!important}
 #auth-email-wrap .st-hint{margin:.25rem 0 .6rem}
+
+html[data-theme] .auth-age{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.25rem 0 0}
+html[data-theme] .auth-age button{display:flex;flex-direction:column;align-items:flex-start;gap:.12rem;text-align:start;padding:.65rem .8rem;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);cursor:pointer;font:inherit}
+html[data-theme] .auth-age button b{font-size:.95rem;font-weight:700}
+html[data-theme] .auth-age button small{font-size:.76rem;line-height:1.3;color:var(--ink-3)}
+html[data-theme] .auth-age button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);outline:2px solid var(--ring);outline-offset:0}
+body[data-known] [data-nav="intake-1"]{display:none!important}
 </style>
 </head>
 
@@ -1380,6 +1387,15 @@ body[data-native] .vs-bk{display:none!important}
                 <div id="auth-pass2-wrap" class="is-gone">
                   <label class="l" for="auth-pass2" data-i18n="authPass2"></label>
                   <input id="auth-pass2" class="field" type="password" autocomplete="new-password" maxlength="64" />
+                </div>
+                <div id="auth-profile-wrap" class="is-gone">
+                  <label class="l" for="auth-name" data-i18n="authName"></label>
+                  <input id="auth-name" class="field" type="text" autocomplete="given-name" maxlength="24" />
+                  <label class="l" id="auth-age-l" data-i18n="authAgeQ"></label>
+                  <div class="auth-age" role="group" aria-labelledby="auth-age-l">
+                    <button type="button" data-authage="child" aria-pressed="false"><b data-i18n="ageChild"></b><small data-i18n="ageChildSub"></small></button>
+                    <button type="button" data-authage="adult" aria-pressed="false"><b data-i18n="ageAdult"></b><small data-i18n="ageAdultSub"></small></button>
+                  </div>
                 </div>
                 <div id="auth-email-wrap" class="is-gone">
                   <label class="l" for="auth-email" id="auth-email-l"></label>
@@ -1835,12 +1851,12 @@ en:{
   voiceTestChild:'Hear Calmi’s voice', voiceTestAdult:'Hear the guide voice',
   voicePick:'Which voice', voiceDefault:'Best available',
   voiceSrcRec:'{n} lines are spoken by a real recorded voice. Anything else is read by this device.',
-  voiceSrcEngine:'Every line is read by this device\u2019s speech engine: {v}.',
+  voiceSrcEngine:'Every line is read aloud by this device.',
   voiceSrcBetter:'A higher-quality Hebrew voice can be added in your device\u2019s speech settings \u2014 look for the Enhanced or Premium download.',
   voiceSampleChild:'Hi! I’m Calmi. Breathe in slowly… and let it all go.',
   voiceSampleAdult:'I’m here with you. Let your shoulders drop, and breathe out slowly.',
-  voiceNone:'No English voice is installed on this device, so spoken guidance stays silent. You can add one in your device’s speech settings.',
-  voiceNoneHe:'No Hebrew voice is installed on this device, so spoken guidance stays silent. Switching the app to English usually fixes it, or add a Hebrew voice in your device’s speech settings.',
+  voiceNone:'No English voice is available on this device, so spoken guidance stays silent.',
+  voiceNoneHe:'No Hebrew voice is available on this device, so spoken guidance stays silent. Switching the app to English usually helps.',
   backBtn:'Back', winsBtn:'Wins wall', newWin:'New win', speaking:'Calmi is speaking', speakingAdult:'Speaking',
   quietByDesign:'Silent on purpose — hearing is the flooded channel',
   softByDesign:'Speaking softly — hearing is the flooded channel. No other sound is playing.',
@@ -1855,8 +1871,8 @@ en:{
   voiceModeTitle:'Voice', voiceCalmi:'Calmi’s babble', voiceHuman:'Real speech', voiceOff:'No voice',
   voiceCalmiNote:'Wordless character sounds, made inside the app. Use it if no real voice is installed.',
   voiceHumanNote:'Says the actual words, using a voice installed on this device. This is the default.',
-  voiceQuality:'Sounds robotic? That is almost always the compact voice macOS installs by default, not a bug. System Settings → Accessibility → Spoken Content → System Voice → Manage Voices, then download the Enhanced or Premium version of your language. It is a different voice entirely, and it changes nothing else on your computer.',
-  voiceNoneInstalled:'No voice for this language is installed on this device, so the session runs without speech — everything else still works. To add one on a Mac: System Settings → Accessibility → Spoken Content → System Voice → Manage Voices.',
+  voiceQuality:'',
+  voiceNoneInstalled:'No voice is available for this language on this device, so the session runs quietly. Everything else works as usual.',
   parentEyebrow:'Parent view', parentTitle:'{name}’s progress', parentTitleEmpty:'Nothing here yet',
   parentSub:'Separate days used: {days}',
   parentEmpty:'Once a rescue has been run, this page fills up on its own: what works, when it tends to happen, and a summary you can hand to a specialist.',
@@ -1954,12 +1970,12 @@ he:{
   voiceTestChild:'לשמוע את הקול של קלמי', voiceTestAdult:'לשמוע את קול ההנחיה',
   voicePick:'איזה קול', voiceDefault:'הקול הכי טוב שיש',
   voiceSrcRec:'{n} משפטים נאמרים בקול אמיתי מוקלט. כל השאר נקרא על ידי המכשיר.',
-  voiceSrcEngine:'כל המשפטים נקראים על ידי מנוע הדיבור של המכשיר: {v}.',
+  voiceSrcEngine:'כל המשפטים מוקראים על ידי המכשיר.',
   voiceSrcBetter:'אפשר להוסיף קול עברי איכותי יותר בהגדרות הדיבור של המכשיר \u2014 מחפשים את ההורדה שנקראת Enhanced או Premium.',
   voiceSampleChild:'היי! אני קלמי. נושמים לאט פנימה… ומשחררים הכל.',
   voiceSampleAdult:'אני כאן. אפשר להוריד את הכתפיים, ולנשוף לאט.',
-  voiceNone:'לא מותקן קול אנגלי במכשיר הזה, ולכן ההנחיה הקולית שותקת. אפשר להוסיף קול בהגדרות הדיבור של המכשיר.',
-  voiceNoneHe:'לא מותקן קול עברי במכשיר הזה, ולכן ההנחיה הקולית שותקת. מעבר לאנגלית בדרך כלל פותר את זה, או להוסיף קול עברי בהגדרות הדיבור של המכשיר.',
+  voiceNone:'אין קול אנגלי זמין במכשיר הזה, ולכן ההנחיה הקולית שותקת.',
+  voiceNoneHe:'אין קול עברי זמין במכשיר הזה, ולכן ההנחיה הקולית שותקת. מעבר לאנגלית בדרך כלל עוזר.',
   backBtn:'חזרה', winsBtn:'קיר הניצחונות', newWin:'ניצחון חדש', speaking:'קלמי מדבר', speakingAdult:'מדבר',
   quietByDesign:'שקט בכוונה — השמיעה היא החוש שבהצפה',
   softByDesign:'מדבר בשקט, כי השמיעה היא החוש שבהצפה. שום צליל אחר לא מתנגן.',
@@ -1974,8 +1990,8 @@ he:{
   voiceModeTitle:'קול', voiceCalmi:'מלמול של קלמי', voiceHuman:'דיבור אמיתי', voiceOff:'בלי קול',
   voiceCalmiNote:'צלילי דמות בלי מילים, שנוצרים בתוך האפליקציה. למקרה שאין קול מותקן.',
   voiceHumanNote:'אומר את המילים עצמן, בעזרת קול שמותקן במכשיר. זו ברירת המחדל.',
-  voiceQuality:'נשמע רובוטי? זו כמעט תמיד גרסת הקול הדחוסה שמותקנת במק כברירת מחדל, ולא באג. פותחים הגדרות מערכת, נכנסים לנגישות, ואז לתוכן מדובר, ואז לקול המערכת, ואז לניהול קולות — ומורידים שם את הגרסה המשופרת (Enhanced) או Premium של השפה. זה קול אחר לגמרי, ולא מפריע לשום דבר אחר במחשב.',
-  voiceNoneInstalled:'לא מותקן במכשיר קול לשפה הזו, ולכן הסשן רץ בלי דיבור — כל השאר עובד כרגיל. להוספת קול במק: הגדרות מערכת ← נגישות ← תוכן מדובר ← קול המערכת ← ניהול קולות.',
+  voiceQuality:'',
+  voiceNoneInstalled:'אין קול זמין לשפה הזו במכשיר הזה, ולכן הסשן רץ בשקט. כל השאר עובד כרגיל.',
   parentEyebrow:'מבט הורים', parentTitle:'ההתקדמות של {name}', parentTitleEmpty:'עדיין אין כאן כלום',
   parentSub:'ימים שונים בשימוש: {days}',
   parentEmpty:'אחרי הסשן הראשון הדף הזה מתמלא לבד: מה עובד, מתי זה בדרך כלל קורה, וסיכום שאפשר להביא לאיש מקצוע.',
@@ -2272,7 +2288,7 @@ en:{
   vsSub:'Choose who speaks to you, or record a voice of your own.',
   vsStep1:'Choose a voice', vsStep2:'Record your own voice',
   vsShipped:'Recorded voice', vsShippedD:'A natural human voice, recorded in advance. Needs an internet connection.',
-  vsDevice:'Device voice', vsDeviceD:'The voice built into this phone or computer. Works offline, sounds more robotic.',
+  vsDevice:'Device voice', vsDeviceD:'The voice built into this phone or computer. Works offline.',
   vsMine:'Your own voice', vsMineD:'{n} of {m} lines recorded. Lines you skip use the recorded voice.', vsMineNone:'Not recorded yet. Record it below.',
   vsOff:'No voice', vsOffD:'Text and sounds only.',
   vsRecommended:'Recommended', vsHear:'Hear it', vsPickDevice:'Which device voice?', vsDeviceDefault:'Automatic',
@@ -2343,7 +2359,7 @@ he:{
   vsSub:'בחרו מי ידבר איתכם, או הקליטו קול משלכם.',
   vsStep1:'בחירת קול', vsStep2:'הקלטת קול משלכם',
   vsShipped:'קול מוקלט', vsShippedD:'קול אנושי וטבעי שהוקלט מראש. דורש חיבור לאינטרנט.',
-  vsDevice:'קול המכשיר', vsDeviceD:'הקול שמובנה בטלפון או במחשב. עובד גם בלי אינטרנט, אבל נשמע רובוטי יותר.',
+  vsDevice:'קול המכשיר', vsDeviceD:'הקול שמובנה בטלפון או במחשב. עובד גם בלי אינטרנט.',
   vsMine:'הקול שלכם', vsMineD:'הוקלטו {n} מתוך {m} משפטים. משפטים שדילגתם עליהם יושמעו בקול המוקלט.', vsMineNone:'עוד לא הקלטתם. אפשר להקליט למטה.',
   vsOff:'בלי קול', vsOffD:'טקסט וצלילים בלבד.',
   vsRecommended:'מומלץ', vsHear:'לשמוע', vsPickDevice:'איזה קול מהמכשיר?', vsDeviceDefault:'אוטומטי',
@@ -4624,7 +4640,6 @@ function voiceModeHTML(){
     (!none?speedHTML():'')+
     '<button type="button" data-action="voice-studio" class="mt-3 w-full rounded-xl border border-[#17171A]/30 bg-[#17171A]/[0.05] px-3 py-2.5 text-start text-sm font-medium text-[#17171A] transition hover:border-[#17171A]">'+
       L.studioOpen+(RecVoice.count(state.lang,state.age==='child'?'child':'adult')?' · '+RecVoice.count(state.lang,state.age==='child'?'child':'adult'):'')+'</button>'+
-    (!none?'<p class="mt-2 text-[11px] font-light leading-relaxed text-[#17171A]/60">'+L.voiceQuality+'</p>':'')+
     '</div>';
 }
 function speedHTML(){
@@ -4649,8 +4664,10 @@ function voiceSourceHTML(){
   // only worth saying when the engine is in play and the good voice is absent
   const plain = rec===0 && cur && cur!=='default' && !/premium|enhanced|natural|neural|siri/i.test(cur.name||'');
   return '<p class="text-[11px] font-light leading-relaxed text-[#17171A]/60">'+esc(s)+
-    (plain?' '+esc(t().voiceSrcBetter):'')+'</p>';
+    ''+'</p>';
 }
+/* device voices are shown as plain numbers, never by their technical names */
+function voiceLabel(list,v,lang){ const i=list.indexOf(v); return (lang==='he'?'קול ':'Voice ')+(i<0?1:i+1); }
 function voicePickerHTML(){
   if(!Voice.supported || !Session.voiceAllowed || Voice.mode==='off' || !Voice.has(state.lang)) return '';
   const list=Voice.listFor(state.lang);
@@ -4661,11 +4678,11 @@ function voicePickerHTML(){
   const cur=Voice.pick(state.lang,persona());
   let o='<option value="">'+t().voiceDefault+'</option>';
   list.forEach(function(v){
-    o+='<option value="'+v.voiceURI+'"'+((Voice.chosenBy[state.lang]===v.voiceURI)?' selected':'')+'>'+esc(v.name)+'</option>';
+    o+='<option value="'+v.voiceURI+'"'+((Voice.chosenBy[state.lang]===v.voiceURI)?' selected':'')+'>'+esc(voiceLabel(list,v,state.lang))+'</option>';
   });
   return '<div><p class="eyebrow text-[#17171A]">'+t().voicePick+'</p>'+
     '<select id="voice-pick" class="mt-1 w-full rounded-xl border border-[#17171A]/15 bg-transparent px-3 py-2 text-sm text-[#17171A]">'+o+'</select>'+
-    ((cur&&cur!=='default')?'<p class="mt-1 text-[11px] font-light text-[#17171A]/45">'+cur.name+'</p>':'')+'</div>';
+    '</div>';
 }
 
 function syncVoiceUI(){
@@ -4824,7 +4841,17 @@ function restart(){
   Session.stop();
   state.overload=null; state.stable=null; state.age=null; state.name=''; state.queue=[]; state.qi=0;
   el.nameInput.value=''; $$('.age-opt').forEach(b=>b.classList.remove('is-selected'));
-  document.body.setAttribute('data-mode','none'); renderIntroCalmi();
+  document.body.setAttribute('data-mode','none'); document.body.removeAttribute('data-known'); renderIntroCalmi();
+  const pf=Auth.cur;
+  if(pf && (pf.age==='child'||pf.age==='adult') && pf.name){
+    /* the account already knows who this is: skip straight to "what feels too big" */
+    state.name=pf.name; state.age=pf.age; el.nameInput.value=pf.name;
+    $$('.age-opt').forEach(b=>b.classList.toggle('is-selected',b.dataset.age===pf.age));
+    document.body.setAttribute('data-mode',pf.age==='child'?'child':'adult'); document.body.setAttribute('data-known','1');
+    try{ Voice.unlock(); }catch(e){}
+    try{ Audio_.init(); Audio_.resume(); }catch(e){}
+    renderIntroCalmi(); validate1(); renderIntake(); renderBuddyIntro(); setStep(2); showScreen('screen-intake-2'); return;
+  }
   validate1(); renderIntake(); setStep(1); showScreen('screen-intake-1');
 }
 
@@ -4878,6 +4905,7 @@ document.addEventListener('click',function(e){
 document.addEventListener('click',function(e){
   const btn=e.target.closest('button'); if(!btn) return;
 
+  if(btn.dataset.authage){ Auth.setAge(btn.dataset.authage); Auth.err=null; Auth.render(); return; }
   if(btn.dataset.lang){ applyLang(btn.dataset.lang); return; }
 
   if(btn.classList.contains('age-opt')){
@@ -4890,6 +4918,7 @@ document.addEventListener('click',function(e){
   }
   if(btn.id==='btn-step1'){
     state.name=el.nameInput.value.trim();
+    if(Auth.cur && state.age){ Auth.cur.name=state.name; Auth.cur.age=state.age; Auth.save(); }
     Audio_.init(); Audio_.resume();          // unlock audio on a real user gesture
     renderIntake(); renderBuddyIntro(); setStep(2); showScreen('screen-intake-2'); return;
   }
@@ -5240,10 +5269,16 @@ const Rename = {
   }
 };
 
+/* ---- v35 · name and child/adult are asked once, at sign-up ---- */
+Object.assign(STR.en,{authName:'What should we call you?', authAgeQ:'Who is this account for?',
+  errName:'Please type the name we should call you.', errAge:'Please choose Child or Adult.'});
+Object.assign(STR.he,{authName:'איך לקרוא לך?', authAgeQ:'עבור מי החשבון?',
+  errName:'אנא כתבו איך לקרוא לכם.', errAge:'אנא בחרו ילד או מבוגר.'});
+
 /* ---- accounts: kept on this device, passwords stored only as salted hashes ---- */
 const Auth = {
   K_ACC:'systemcalm.accounts', K_SES:'systemcalm.session', K_LEG:'systemcalm.legacy',
-  accounts:[], cur:null, persists:true, fails:{}, tab:'in', err:null, mem:{},
+  accounts:[], cur:null, pendAge:null, persists:true, fails:{}, tab:'in', err:null, mem:{},
   get(store,k){ try{ return window[store].getItem(k); }catch(e){ return this.mem[store+k]||null; } },
   set(store,k,v){ try{ window[store].setItem(k,v); return true; }catch(e){ this.mem[store+k]=v; return false; } },
   del(store,k){ try{ window[store].removeItem(k); }catch(e){} delete this.mem[store+k]; },
@@ -5274,11 +5309,14 @@ const Auth = {
   signUp(user,pw,pw2,keep){
     const bad=this.check(user,pw,pw2,true); if(bad) return bad;
     if(this.find(user)) return ['errTaken'];
+    const nmEl=document.getElementById('auth-name'), pname=String(nmEl?nmEl.value:'').replace(/[<>]/g,'').replace(/\s+/g,' ').trim().slice(0,24);
+    if(!pname) return ['errName'];
+    if(this.pendAge!=='child' && this.pendAge!=='adult') return ['errAge'];
     const id='u'+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36);
     const salt=this.salt();
     // the first account on a device inherits whatever was saved before accounts existed
     const claimed=this.get('localStorage',this.K_LEG)==='1';
-    const a={id:id, user:this.norm(user), shown:String(user).trim(), salt:salt, hash:this.hash(pw,salt), ns:claimed?id:'', created:Date.now()};
+    const a={id:id, user:this.norm(user), shown:String(user).trim(), salt:salt, hash:this.hash(pw,salt), ns:claimed?id:'', created:Date.now(), name:pname, age:this.pendAge};
     this.accounts.push(a); this.save();
     this.set('localStorage',this.K_LEG,'1');
     this.enter(a,keep);
@@ -5350,7 +5388,8 @@ const Auth = {
     this.showLanding('in');
   },
   showLanding(tab){
-    ['auth-user','auth-pass','auth-pass2'].forEach(function(i){ const e=document.getElementById(i); if(e) e.value=''; });
+    ['auth-user','auth-pass','auth-pass2','auth-name'].forEach(function(i){ const e=document.getElementById(i); if(e) e.value=''; });
+    this.setAge(null);
     this.setTab(tab||'in');
     setStep(0); showScreen('screen-landing');
   },
@@ -5360,6 +5399,7 @@ const Auth = {
     document.getElementById('tab-in').setAttribute('aria-selected',up?'false':'true');
     document.getElementById('tab-up').setAttribute('aria-selected',up?'true':'false');
     document.getElementById('auth-pass2-wrap').classList.toggle('is-gone',!up);
+    const prw=document.getElementById('auth-profile-wrap'); if(prw) prw.classList.toggle('is-gone',!up);
     document.getElementById('auth-pass').setAttribute('autocomplete',up?'new-password':'current-password');
     document.getElementById('auth-forgot').classList.toggle('is-gone',up);
     document.getElementById('auth-forgot-box').classList.add('is-gone');
@@ -5374,6 +5414,10 @@ const Auth = {
     if(eye){ const show=document.getElementById('auth-pass').type==='password'; eye.setAttribute('aria-label',show?L.authShow:L.authHide); }
     const er=document.getElementById('auth-err');
     if(er) er.textContent=this.err?fill(L[this.err[0]]||'',this.err[1]||{}):'';
+  },
+  setAge(v){
+    this.pendAge=v||null;
+    document.querySelectorAll('[data-authage]').forEach(function(b){ b.setAttribute('aria-pressed',b.dataset.authage===v?'true':'false'); });
   },
   fail(e){ this.err=e; this.render(); },
   paint(){
@@ -5742,7 +5786,7 @@ function renderStudio(){
     const list=Voice.listFor(lang);
     if(list.length>1){
       devSel='<select class="vsel" id="vs-device" aria-label="'+esc(L.vsPickDevice)+'"><option value="">'+esc(L.vsDeviceDefault)+'</option>'+
-        list.map(function(v){ return '<option value="'+esc(v.voiceURI)+'"'+(Voice.chosenBy[lang]===v.voiceURI?' selected':'')+'>'+esc(v.name)+'</option>'; }).join('')+'</select>';
+        list.map(function(v){ return '<option value="'+esc(v.voiceURI)+'"'+(Voice.chosenBy[lang]===v.voiceURI?' selected':'')+'>'+esc(voiceLabel(list,v,lang))+'</option>'; }).join('')+'</select>';
     }
   }
   let h='<div>';
@@ -6312,7 +6356,7 @@ try{ runHero(); syncFilm(); }catch(e){}
 
 /* Test hook. Exposed only when the URL explicitly asks for it, so the app's
    internals stay private in normal use but a regression run can inspect them. */
-try{ if(/[?&]dbg(\b|=)/.test(location.search)) window.__dbg={Voice:Voice,Session:Session,state:state,STR:STR,ADU:ADU,KID:KID,TECHNIQUES:TECHNIQUES,RecVoice:RecVoice,Studio:Studio,recText:recText,REC_KEYS:REC_KEYS,VOICED:VOICED,VOICED_SET:VOICED_SET,Voiced:Voiced,adultLine:adultLine,ENCOURAGE:ENCOURAGE,Auth:Auth,Registry:Registry,Settings:Settings,Chat:Chat,Rename:Rename,CHAT:CHAT,sha256hex:sha256hex,voiceChoice:voiceChoice}; }catch(e){}
+try{ if(/[?&]dbg(\b|=)/.test(location.search)) window.__dbg={restart:restart,Voice:Voice,Session:Session,state:state,STR:STR,ADU:ADU,KID:KID,TECHNIQUES:TECHNIQUES,RecVoice:RecVoice,Studio:Studio,recText:recText,REC_KEYS:REC_KEYS,VOICED:VOICED,VOICED_SET:VOICED_SET,Voiced:Voiced,adultLine:adultLine,ENCOURAGE:ENCOURAGE,Auth:Auth,Registry:Registry,Settings:Settings,Chat:Chat,Rename:Rename,CHAT:CHAT,sha256hex:sha256hex,voiceChoice:voiceChoice}; }catch(e){}
 })();
 </script>
 </body>
